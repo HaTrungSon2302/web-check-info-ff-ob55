@@ -35,21 +35,29 @@ try:
 except ImportError:
     HAS_JWT = False
 
-# ---------- JSON output (SORTED KEYS → same as Flask jsonify) ----------
+# ---------- JSON output (PRETTY PRINT: mỗi trường/nhóm xuống dòng) ----------
 try:
     import orjson
     def _jsonify(data, status=200):
         return Response(
-            orjson.dumps(data, option=orjson.OPT_SORT_KEYS),
+            orjson.dumps(
+                data,
+                option=orjson.OPT_SORT_KEYS | orjson.OPT_INDENT_2
+            ).decode("utf-8") + "\n",
             status=status,
-            mimetype='application/json'
+            mimetype='application/json; charset=utf-8'
         )
 except ImportError:
     def _jsonify(data, status=200):
         return Response(
-            json.dumps(data, separators=(',', ':'), ensure_ascii=False, sort_keys=True),
+            json.dumps(
+                data,
+                ensure_ascii=False,
+                sort_keys=True,
+                indent=2
+            ) + "\n",
             status=status,
-            mimetype='application/json'
+            mimetype='application/json; charset=utf-8'
         )
 
 
